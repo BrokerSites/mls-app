@@ -102,6 +102,7 @@ code {
   border-radius: 5px;
   min-width: 60px;
   text-align: center;
+  width: fit-content;
 }
 
 .leaflet-marker-icon .custom-icon .leaflet-zoom-animated .leaflet-interactive {
@@ -520,4 +521,8 @@ code {
   .save-footer {
     display: none;
   }
+}
+
+.autocomplete-item.highlighted {
+  background-color: #eee;  /* Light grey background for highlighted item */
 }

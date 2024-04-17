@@ -3,57 +3,54 @@ import React, { useState, useEffect, useRef } from 'react';
 function Autocomplete({ cities, setSearchText, onSelectTag }) {
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const wrapperRef = useRef(null);
 
   const handleChange = (e) => {
     const value = e.target.value;
     setInputValue(value);
-    
     if (value.length > 0) {
-      const safeValue = value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-      const regex = new RegExp(`^${safeValue}`, 'i');
+      const regex = new RegExp(`^${value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}`, 'i');
       setSuggestions(cities.filter(city => regex.test(city)));
     } else {
-      setSuggestions([]);
+      setSuggestions(cities);
     }
+    setHighlightedIndex(-1);  // Reset the highlighted index on input change
+  };
+
+  const handleFocus = () => {
+    setSuggestions(cities);
+    setHighlightedIndex(-1);
   };
 
   const handleSelectItem = (item) => {
-        if (cities.includes(item) || /\(.+\)/.test(item)) {
-            setSearchText(item);
-            onSelectTag(item); // Only call onSelectTag if the item is valid
-        }
-        setInputValue('');
-        setSuggestions([]);
-    };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && suggestions.length > 0) {
-        e.preventDefault(); // Prevent the form from being submitted
-        const matchedSuggestion = suggestions.find(suggestion => 
-            suggestion.toLowerCase().startsWith(inputValue.trim().toLowerCase())
-        );
-        if (matchedSuggestion) {
-            setSearchText(matchedSuggestion);
-            onSelectTag(matchedSuggestion); // Only call onSelectTag if the suggestion is valid
-            setInputValue('');
-            setSuggestions([]);
-        }
-    }
-};
+    setSearchText(item);
+    onSelectTag(item);
+    setInputValue('');
+    setSuggestions([]);
+    setHighlightedIndex(-1);
+  };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Backspace' && suggestions.includes(inputValue)) {
-      setInputValue('');
-      setSuggestions([]);
+    if (e.key === 'ArrowDown' && suggestions.length > 0) {
+      setHighlightedIndex((prevIndex) => (prevIndex < suggestions.length - 1 ? prevIndex + 1 : prevIndex));
+    } else if (e.key === 'ArrowUp' && suggestions.length > 0) {
+      setHighlightedIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : 0));
+    } else if (e.key === 'Enter') {
+      if (highlightedIndex >= 0) {
+        handleSelectItem(suggestions[highlightedIndex]);
+      } else if (suggestions.length > 0) {
+        handleSelectItem(suggestions[0]);  // Select the first item if none is highlighted
+      }
+      e.preventDefault();
     }
   };
 
   useEffect(() => {
     function handleClickOutside(event) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-        setInputValue('');
         setSuggestions([]);
+        setHighlightedIndex(-1);
       }
     }
 
@@ -61,7 +58,7 @@ function Autocomplete({ cities, setSearchText, onSelectTag }) {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [wrapperRef]);
+  }, []);
 
   return (
     <div className="autocomplete-wrapper" ref={wrapperRef}>
@@ -70,8 +67,8 @@ function Autocomplete({ cities, setSearchText, onSelectTag }) {
             className="form-control custom-rounded"
             value={inputValue}
             onChange={handleChange}
+            onFocus={handleFocus}
             onKeyDown={handleKeyDown}
-            onKeyPress={handleKeyPress}
             placeholder="Search city or neighborhood"
         />
         {suggestions.length > 0 && (
@@ -79,7 +76,7 @@ function Autocomplete({ cities, setSearchText, onSelectTag }) {
                 {suggestions.map((suggestion, index) => (
                     <li
                         key={index}
-                        className="autocomplete-item"
+                        className={`autocomplete-item ${index === highlightedIndex ? 'highlighted' : ''}`}
                         onClick={() => handleSelectItem(suggestion)}
                     >
                         {suggestion}

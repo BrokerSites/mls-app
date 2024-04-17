@@ -11,8 +11,9 @@ const App = () => {
     const queryParams = new URLSearchParams(window.location.search);
     const siteDomain = queryParams.get('site');
 
-    const [isMobileMapView, setIsMobileMapView] = useState(false);
     const [cities, setCities] = useState([]);
+
+    const [isMobileMapView, setIsMobileMapView] = useState(false);
     const [listings, setListings] = useState([]);
 
     const [selectedTags, setSelectedTags] = useState([]);
@@ -52,6 +53,35 @@ const App = () => {
       
         setSortParams({ sort_name: sortName, sort_dir: sortDir });
       };
+
+      useEffect(() => {
+        fetchCities();
+    }, []);
+
+        function fetchCities() {
+        const auth = {
+            username: 'simplyrets',
+            password: 'simplyrets'
+        };
+
+        axios.get('https://api.simplyrets.com/properties', { auth })
+            .then(response => {
+                const citiesSet = new Set();
+                response.data.forEach(listing => {
+                    if (listing.address && listing.address.city) {
+                        citiesSet.add(listing.address.city);
+                    }
+                });
+                const sortedCities = Array.from(citiesSet).sort();
+                console.log(sortedCities);
+                setCities(sortedCities);
+            })
+            .catch(error => {
+                console.error('Error fetching cities:', error);
+            });
+    }
+
+    
     
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -67,14 +97,14 @@ const App = () => {
 
     const handleSelectTag = (tag) => {
         // Check if the tag is in the cities list or matches the pattern "Neighborhood (City)"
-        const isValidTag = cities.includes(tag) || /\(.+\)/.test(tag);
+        const isValidTag = cities.includes(tag);
         if (isValidTag && !selectedTags.includes(tag)) {
-            setSelectedTags([...selectedTags, tag]);
+            setSelectedTags([...selectedTags, tag]);  // Add tag to the array
         }
     };
-
+    
     const handleRemoveTag = (tagToRemove) => {
-        setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
+        setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));  // Remove tag from the array
     };
 
     useEffect(() => {
@@ -90,74 +120,59 @@ const App = () => {
         };
     }, []);
 
-    useEffect(() => {
-        const fetchCitiesAndNeighborhoods = async () => {
-            try {
-                const response = await axios.post('https://server.brokersites.io/api/accounts', {
-                    site: siteDomain
-                });
-                const xmlData = response.data;
 
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(xmlData, "text/xml");
 
-                let cityList = [];
-                let neighborhoodList = [];
-
-                const accounts = xmlDoc.getElementsByTagName('Account');
-                Array.from(accounts).forEach(account => {
-                    const cities = account.getElementsByTagName('City');
-                    Array.from(cities).forEach(cityElement => {
-                        const nameElements = cityElement.getElementsByTagName('Name');
-                        if (nameElements.length > 0) {
-                            const cityName = nameElements[0].textContent.trim();
-                            cityList.push(cityName);
-                            const neighborhoods = cityElement.getElementsByTagName('Neighborhood');
-
-                            Array.from(neighborhoods).forEach(neighborhoodElement => {
-                                const neighborhoodName = neighborhoodElement.textContent.trim();
-                                neighborhoodList.push(`${neighborhoodName} (${cityName})`);
-                            });
-                        }
-                    });
-                });
-
-                const combinedList = [...new Set([...cityList, ...neighborhoodList])];
-                setCities(combinedList);
-            } catch (error) {
-                console.error('Error fetching XML data:', error);
-            }
-        };
-
-        fetchCitiesAndNeighborhoods();
-    }, []);
-
-    const fetchRentals = async (params) => {
+    const fetchRentals = async () => {
+        const params = new URLSearchParams({
+            limit: 100,
+            offset: (currentPage - 1) * itemsPerPage
+        });
+    
+        // Append each selected city as a separate 'cities' parameter
+        selectedTags.forEach(city => {
+            params.append('cities', city);
+        });
+    
         try {
-            const response = await axios.post('https://server.brokersites.io/api/rentals', params);
-            if (response.data && response.data.listings) {
-                setListings(response.data.listings);
-                setTotalResults(response.data.total);
-            } else {
-                throw new Error('Listings data is not available in the response');
-            }
+            const response = await axios.get('https://api.simplyrets.com/properties', {
+                params: params, // Directly use the URLSearchParams object
+                auth: {
+                    username: 'simplyrets',
+                    password: 'simplyrets'
+                }
+            });
+            console.log("API Response:", response.data);
+            setListings(response.data);
+            setTotalResults(response.data.length);
         } catch (error) {
             console.error('Error fetching rental listings:', error);
             setListings([]);
             setTotalResults(0);
         }
     };
+    
+    
+    useEffect(() => {
+        fetchRentals();
+    }, [selectedTags, currentPage]);  // Update dependency array to include selectedTags
+    
+    
+    
+    useEffect(() => {
+        console.log("Listings Updated:", listings);
+    }, [listings]);
+    
 
     useEffect(() => {
     // Build your API parameters here as you have them already defined
     const apiParams = {
         site: siteDomain, // include the siteDomain in the API call parameters
-        city_neighborhood: cityNeighborhood,
-        min_bed: prepareBedsBathsValues(bedsBaths).minBed,
-        max_bed: prepareBedsBathsValues(bedsBaths).maxBed,
-        baths: prepareBedsBathsValues(bedsBaths).bathsRange.join(','),
-        min_rent: minRent,
-        max_rent: maxRent >= 10000 ? undefined : maxRent,
+        cities: cityNeighborhood,
+        minbeds: prepareBedsBathsValues(bedsBaths).minBed,
+        maxbeds: prepareBedsBathsValues(bedsBaths).maxBed,
+        minbaths: prepareBedsBathsValues(bedsBaths).bathsRange.join(','),
+        minprice: minRent,
+        maxprice: maxRent >= 10000 ? undefined : maxRent,
         avail_from: formatDateForApi(moveInOption, selectedDate).availFrom,
         avail_to: formatDateForApi(moveInOption, selectedDate).availTo,
         photo: hasPhotos ? 'Y' : undefined,
@@ -248,109 +263,12 @@ const App = () => {
         return { availFrom, availTo };
     };
 
-    useEffect(() => {
-        // Format city_neighborhood based on selectedTags immediately when they change
-        const formattedCityNeighborhood = selectedTags.map(tag => {
-            if (tag.includes('(')) {
-                const parts = tag.match(/(.*)\s\((.*)\)/);
-                return `${parts[2]}:${parts[1]}`;
-            }
-            return tag;
-        }).join(',');
-        setCityNeighborhood(formattedCityNeighborhood);
-    }, [selectedTags]); // This ensures cityNeighborhood is updated as soon as selectedTags change
-
-    useEffect(() => {
-
-        const modalJustClosed = Object.entries(modalState).some(([key, value]) => !value && prevModalStateRef.current[key]);
-        const tagsChanged = selectedTags.length !== prevSelectedTagsRef.current.length;
+useEffect(() => {
+    console.log("Selected cities for search:", selectedTags.join(', '));
+}, [selectedTags]);
+    
 
 
-        const currentValues = {
-            cityNeighborhood: selectedTags.map(tag => tag.includes('(') ? tag.match(/(.*)\s\((.*)\)/).slice(2).join(':') : tag).join(','),
-            bedsBaths: prepareBedsBathsValues(bedsBaths),
-            minRent,
-            maxRent,
-            moveInOption,
-            selectedDate,
-            hasPhotos,
-            isPetFriendly,
-            hasParking
-        };
-
-        const valuesChanged = Object.keys(currentValues).some(key =>
-            JSON.stringify(currentValues[key]) !== JSON.stringify(previousValuesRef.current[key])
-        );
-
-        if ((modalJustClosed || tagsChanged) && valuesChanged) {
-
-            const { minBed, maxBed, bathsRange } = prepareBedsBathsValues(bedsBaths);
-            const baths = bathsRange.join(','); // Store the joined baths range in a variable
-            const { availFrom, availTo } = formatDateForApi(moveInOption, selectedDate);
-
-            const formattedCityNeighborhood = selectedTags.map(tag => {
-                if (tag.includes('(')) {
-                    const parts = tag.match(/(.*)\s\((.*)\)/);
-                    return `${parts[2]}:${parts[1]}`;
-                }
-                return tag;
-            }).join(',');
-
-
-            console.log("City Neighborhood:", formattedCityNeighborhood);
-            console.log("Min Bed:", minBed);
-            console.log("Max Bed:", maxBed);
-            console.log("Baths:", baths);
-            console.log("Min Price:", minRent);
-            console.log("Max Price:", maxRent);
-            console.log("Move-In Option:", moveInOption);
-            console.log("Available From:", availFrom);
-            console.log("Available To:", availTo);
-            console.log("Selected Date:", selectedDate);
-            // Here you would trigger the API request with these parameters
-
-            const apiParams = {
-                site: siteDomain, // include the siteDomain in the API call parameters
-                page_count: 100,
-                city_neighborhood: formattedCityNeighborhood,
-                min_bed: minBed,
-                max_bed: maxBed !== undefined ? maxBed : undefined,
-                baths: baths,
-                min_rent: minRent,
-                max_rent: maxRent >= 10000 ? undefined : maxRent,
-                avail_from: ['Anytime', 'Before', 'Now'].includes(moveInOption) ? undefined : availFrom,
-                avail_to: ['Anytime', 'After'].includes(moveInOption) ? undefined : availTo,
-                photo: hasPhotos ? 'Y' : undefined,
-                pet: isPetFriendly ? 'friendly' : undefined,
-                parking: hasParking ? 'Y' : undefined,
-                ...(sortParams.sort_name && { sort_name: sortParams.sort_name }),
-                ...(sortParams.sort_dir && { sort_dir: sortParams.sort_dir }),
-            };
-
-            Object.keys(apiParams).forEach(key => apiParams[key] === undefined && delete apiParams[key]);
-
-            (async () => {
-                try {
-                    const response = await axios.post('https://server.brokersites.io/api/rentals', apiParams);
-                    console.log("Response from API:", response.data); // Log the entire response data from the API
-                    setListings(response.data.listings || []);
-                    setTotalResults(response.data.total || 0); // Update the total results
-                } catch (error) {
-                    console.error('Error fetching listings:', error);
-                    setListings([]); // Reset the listings on error
-                    setTotalResults(0); // Reset the total results on error
-                }
-            })(); // Immediately invoked async function to handle the API call
-
-            console.log("API Parameters:", apiParams);
-
-            previousValuesRef.current = currentValues;
-        }
-
-        // Update the refs for the next render
-        prevModalStateRef.current = modalState;
-        prevSelectedTagsRef.current = selectedTags.slice();
-    }, [modalState, selectedTags, bedsBaths, minRent, maxRent, moveInOption, selectedDate]);
 
 
     useEffect(() => {

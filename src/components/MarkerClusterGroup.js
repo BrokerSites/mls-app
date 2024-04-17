@@ -15,7 +15,14 @@ const MarkerClusterGroup = ({ listings, siteDomain }) => {
     });
   
       listings.forEach((listing) => {
-        const { latitude, longitude, price, beds, baths, photos, city, } = listing;
+        const { geo, listPrice, property, photos, address } = listing;
+        const { city } = address;
+        const { bedrooms, bathsFull, bathsHalf = 0 } = property;
+        const latitude = geo.lat;
+        const longitude = geo.lng;
+        const price = listPrice.toLocaleString();
+        const beds = bedrooms;
+        const baths = bathsFull + (bathsHalf * 0.5);
 
         if (!latitude || !longitude) {
           console.warn('Listing has invalid coordinates:', listing);

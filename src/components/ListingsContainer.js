@@ -1,7 +1,7 @@
 import React from 'react';
 import ListingCard from './ListingCard.js';
-import TagBox from './TagBox'; // Import TagBox component
-import ResultsBanner from './ResultsBanner'; // Import ResultsBanner component
+import TagBox from './TagBox';
+import ResultsBanner from './ResultsBanner';
 import PaginationComponent from './PaginationComponent.js';
 
 const ListingsContainer = ({ listings, selectedTags, onRemoveTag, totalResults, itemsPerPage, page, onPageChange, onSortChange, sortParams, currentPage, siteDomain }) => {
@@ -16,28 +16,29 @@ const ListingsContainer = ({ listings, selectedTags, onRemoveTag, totalResults, 
   return (
     <div className="listings-container">
       <div className="tag-box-container">
-      <TagBox tags={tags} onRemoveTag={onRemoveTag} />
-      <ResultsBanner 
-      count={listings.length} 
-      total={totalResults} 
-      onSortChange={onSortChange}
-      sortParams={sortParams}
-      currentPage={currentPage}
-      itemsPerPage={itemsPerPage}
-      />
-      <PaginationComponent 
-        totalResults={totalResults}
-        itemsPerPage={itemsPerPage}
-        page={page}
-        onPageChange={onPageChange}
-      />
+        <TagBox tags={tags} onRemoveTag={onRemoveTag} />
+        <ResultsBanner 
+          count={listings.length} 
+          total={totalResults} 
+          onSortChange={onSortChange}
+          sortParams={sortParams}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+        />
+        <PaginationComponent 
+          totalResults={totalResults}
+          itemsPerPage={itemsPerPage}
+          page={page}
+          onPageChange={onPageChange}
+        />
       </div>
-    <div className='card-container'>
-    {listings.map(listing => (
-        <ListingCard key={listing.id} listing={listing} siteDomain={siteDomain} />
-      ))}
-    </div>
-    <div className='save-footer'></div>
+      <div className='card-container'>
+        {listings.map(listing => (
+          // Ensure the correct identifier is used for the key prop
+          <ListingCard key={listing.mlsId} listing={listing} siteDomain={siteDomain} />
+        ))}
+      </div>
+      <div className='save-footer'></div>
     </div>
   );
 };
