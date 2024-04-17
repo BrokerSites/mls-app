@@ -1,0 +1,523 @@
+/* index.css */
+@import '~bootstrap-icons/font/bootstrap-icons.css';
+
+/* Existing styles */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+.my-react-app {
+  height: 100%;
+}
+
+body,
+html {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  /* Prevent scrolling on the entire page */
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* New styles for ListingCard */
+.card {
+  display: flex;
+  flex-direction: row;
+  /* Align children (image and text) side by side */
+  margin: 1rem;
+  width: 100%;
+  /* Or specific width as needed */
+  height: 10em;
+  min-width: 0;
+  margin-right: 1em;
+}
+
+.card-img-top {
+  width: 50%;
+  /* Adjust based on desired image width */
+  height: auto;
+  object-fit: cover;
+  /* Ensures the image covers the area nicely */
+}
+
+.card-body {
+  flex: 1;
+  /* Takes the remaining space */
+  padding: 0.5rem;
+  /* Adjust padding as needed */
+}
+
+
+.listings-container {
+  max-width: 40%;
+  min-width: 500px;
+  overflow-y: auto;
+  /* Enable vertical scrolling only within the listings container */
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Reserve space for the scrollbar */
+}
+
+@media (max-width: 1000px) {
+  .listings-container {
+    max-width: none;
+    min-width: 320px;
+    width: 100%;
+  }
+}
+
+.listings-and-map {
+  display: flex;
+  flex-direction: row;
+  /* Assuming you want a column layout */
+  height: 92vh;
+  /* 100% of the viewport height */
+  overflow: hidden;
+  width: 100%;
+  /* Prevent scrolling on the app container */
+}
+
+.custom-icon {
+  text-align: center;
+  border: 1px solid #333;
+  /* Example border */
+  background-color: #fff;
+  border-radius: 5px;
+  background-color: white;
+  padding: 5px;
+  border-radius: 5px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.leaflet-marker-icon .custom-icon .leaflet-zoom-animated .leaflet-interactive {
+  height: 30px;
+}
+
+.map-container {
+  height: 100%;
+  width: 100%;
+}
+
+/* Assuming "listings-and-map" takes full width and you want to hide the map under 1000px width screens */
+@media (max-width: 1000px) {
+
+  .map-container,
+  .lc-tb-c {
+    display: none !important;
+
+  }
+}
+
+.search-bar {
+  padding: .75em;
+  position: relative;
+
+}
+
+.search-input {
+  max-width: 840px
+}
+
+@media (min-width: 1000px) {
+
+  .mobile-options,
+  .s-rb-wrap,
+  .sb-pc {
+    display: none;
+  }
+
+  .card-container {
+    padding-right: 2rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 1000px) {
+
+  .p-btn,
+  .bb-btn,
+  .mi-btn,
+  .price-btn,
+  .rb-wrap {
+    display: none;
+  }
+
+  .first-row {
+    margin-bottom: .5rem;
+  }
+
+
+
+}
+
+.row {
+  --bs-gutter-x: .75rem;
+  gap: .5em;
+}
+
+
+.desktop-view {
+  display: flex;
+}
+
+.mobile-view {
+  display: none;
+  height: 70vh;
+  overflow-y: auto;
+}
+
+@media (max-width: 1000px) {
+  .desktop-view {
+    display: none;
+  }
+
+  .mobile-view {
+    display: block;
+  }
+}
+
+.autocomplete-container {
+  list-style-type: none;
+  /* Removes bullet points */
+  margin: 0;
+  /* Remove default margin */
+  padding: 0;
+  /* Remove default padding */
+  position: absolute;
+  top: 100%;
+  /* Directly below the input field */
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border: 1px solid #ddd;
+  z-index: 2000;
+  /* Make sure it's on top of other content */
+}
+
+
+.autocomplete-item {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item:focus {
+  background-color: #efefef;
+}
+
+.input-group {
+  display: flex;
+  /* Ensures flexbox layout */
+  align-items: stretch;
+  /* Makes sure children of input-group are the same height */
+  width: 100%;
+  /* Take up all available width */
+  flex-wrap: nowrap;
+}
+
+.input-group>input {
+  flex-grow: 1;
+  /* Allow input to grow */
+}
+
+.input-group>button {
+  flex-shrink: 0;
+  /* Prevent button from shrinking */
+}
+
+/* Use a media query to ensure proper display on smaller screens */
+@media (max-width: 768px) {
+
+
+  .input-group>input {
+    width: 100%;
+    /* Full width on small screens */
+  }
+}
+
+.autocomplete-wrapper {
+  width: 100%;
+}
+
+.form-control.custom-rounded {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  /* The left corners retain the default border-radius from Bootstrap or your custom value */
+}
+
+.tag-box {
+  border: 1px solid #ccc;
+  padding: 8px;
+  min-height: 50px;
+  /* Minimum height to make it visible even when empty */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  /* Space between tags */
+  width: 100%;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.tag-box-container {
+  position: sticky;
+  top: 0;
+  /* Adjust as needed, depending on your header size */
+  background-color: white;
+  /* Or any non-transparent color */
+  z-index: 10;
+  /* Ensures the tag box stays above other content */
+  padding: 1rem;
+  padding-bottom: .25rem;
+  padding-top: 0rem;
+  width: 100%;
+}
+
+.tag-placeholder {
+  color: #999;
+  display: flex;
+  align-items: center;
+  /* Vertically center placeholder text */
+  justify-content: center;
+  /* Horizontally center placeholder text */
+  height: 100%;
+  /* Full height of the parent .tag-box */
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  background-color: #0d6efd;
+  border-radius: 16px;
+  padding: 4px 8px;
+  color: white;
+}
+
+.tag button {
+  margin-left: 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: white;
+}
+
+.option-input-div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.option-input {
+  width: 5em;
+}
+
+.input-overlay {
+  position: absolute;
+  margin-top: 1rem;
+  background: white;
+  padding: 2em;
+  z-index: 3000;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: auto;
+  max-width: 30%;
+  /* Adjust this percentage based on your layout */
+  overflow: hidden;
+}
+
+.bb-input-overlay {
+  position: absolute;
+  margin-top: 1rem;
+  background: white;
+  padding: 2em;
+  z-index: 3000;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: auto;
+  max-width: 30%;
+  /* Adjust this percentage based on your layout */
+  overflow: hidden;
+  display: flex !important;
+  flex-direction: column;
+  gap: 2.5em;
+}
+
+.mi-input-overlay {
+  position: absolute;
+  margin-top: 1rem;
+  background: white;
+  padding: 2em;
+  z-index: 3000;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex !important;
+  flex-direction: column;
+  gap: 2.5em;
+  width: fit-content;
+}
+
+
+.mi-select {
+  min-width: 150px;
+  min-height: 26px;
+  margin-right: 5px;
+
+}
+
+.p-btn,
+.bb-btn,
+.mi-btn,
+.af-btn,
+.c-btn {
+  width: fit-content;
+}
+
+.af-input-overlay {
+  position: absolute;
+  margin-top: 1rem;
+  background: white;
+  padding: 2em;
+  z-index: 3000;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex !important;
+  flex-direction: column;
+  gap: 2.5em;
+  width: fit-content;
+  max-height: 90vh;
+  /* Max height as a percentage of the viewport height */
+  overflow: auto;
+  /* Enable scrolling */
+}
+
+@media (max-width: 1000px) {
+  .af-input-overlay {
+    top: 45% !important;
+    width: 95% !important;
+  }
+
+}
+
+.af-checks {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.af-check-wrap {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  margin: 0 5px 0 5px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.results-banner {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin: .5rem;
+}
+
+.sort-dropdown {
+  display: flex;
+  gap: 3px;
+}
+
+.pagination-component {
+  margin-bottom: .5rem;
+  align-items: center;
+}
+
+.card-container {
+  width: 100%;
+  padding-right: 2em;
+}
+
+.leaflet-popup-content p {
+  margin: 17px 0;
+  margin: 0.5em;
+}
+
+.bbcity {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.details-inquire {
+  display: flex;
+  flex-direction: row;
+  margin: 2rem;
+  max-width: 70%;
+}
+
+.listing-details {
+  padding-right: 2rem;
+  width: 50%;
+}
+
+.prop-det-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.listing-details {
+  padding-right: 2rem;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: .5em;
+}
+
+
+@media (max-width: 1000px) {
+  .listing-details {
+    padding-right: 0;
+    width: 100%;
+  }
+
+  .details-inquire {
+    margin: 1rem;
+    max-width: 100%;
+  }
+
+  .tag-box-container {
+    display: none;
+  }
+}
+
+.save-footer {
+  height: 300px;
+  background-image: url('https://s3.us-east-2.amazonaws.com/app.brokersites.io/imgs/tiles.png');
+  width: 100%;
+}
+
+@media (min-width: 1000px) {
+  .save-footer {
+    display: none;
+  }
+}
