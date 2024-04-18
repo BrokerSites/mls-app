@@ -30,6 +30,7 @@ const App = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 100;
     const [sortParams, setSortParams] = useState({ sort_name: null, sort_dir: null });
+    const [modalClosed, setModalClosed] = useState(false);
 
     const handleSortChange = (event) => {
         const value = event.target.value;
@@ -124,7 +125,7 @@ const App = () => {
 
     const fetchRentals = async () => {
         const params = new URLSearchParams({
-            limit: 100,
+            limit: itemsPerPage,
             offset: (currentPage - 1) * itemsPerPage
         });
     
@@ -132,6 +133,29 @@ const App = () => {
         selectedTags.forEach(city => {
             params.append('cities', city);
         });
+    
+        // Include minimum and maximum price filters if they are set
+        if (minRent > 0) {
+            params.append('minprice', minRent);
+        }
+        if (maxRent < 10000000) { // Assuming 10,000,000 is your upper bound
+            params.append('maxprice', maxRent);
+        }
+    
+        // Include beds and baths filters
+        if (bedsBaths.beds[0] > 0) {
+            params.append('minbeds', bedsBaths.beds[0]);
+        }
+        if (bedsBaths.beds[1] && bedsBaths.beds[1] < 5) { // Check if there is a maximum limit set for beds
+            params.append('maxbeds', bedsBaths.beds[1]);
+        }
+    
+        if (bedsBaths.baths[0] > 0) {
+            params.append('minbaths', bedsBaths.baths[0]);
+        }
+        if (bedsBaths.baths[1] && bedsBaths.baths[1] < 5) { // Check if there is a maximum limit set for baths
+            params.append('maxbaths', bedsBaths.baths[1]);
+        }
     
         try {
             const response = await axios.get('https://api.simplyrets.com/properties', {
@@ -152,11 +176,40 @@ const App = () => {
     };
     
     
+    
+
+    useEffect(() => {
+        // This function will check if any modal has just been opened or closed
+        const modalJustClosed = Object.entries(modalState).some(([key, value]) => 
+            !value && prevModalStateRef.current[key]
+        );
+        const modalJustOpened = Object.entries(modalState).some(([key, value]) => 
+            value && !prevModalStateRef.current[key]
+        );
+    
+        if (modalJustClosed) {
+            console.log("Modal has been closed");
+            setModalClosed(true);  // Set to true when a modal closes
+        }
+    
+        if (modalJustOpened) {
+            console.log("Modal has been opened");
+        }
+    
+        // Reset modalClosed to false after acknowledging the closure
+        if (modalClosed) {
+            setModalClosed(false);
+        }
+    
+        // Update the previous modal state to the current one for the next render
+        prevModalStateRef.current = modalState;
+    }, [modalState]);
+    
+    
     useEffect(() => {
         fetchRentals();
-    }, [selectedTags, currentPage]);  // Update dependency array to include selectedTags
-    
-    
+    }, [selectedTags, currentPage, modalClosed]);  // Add modalState to the dependency array
+
     
     useEffect(() => {
         console.log("Listings Updated:", listings);
@@ -263,13 +316,10 @@ const App = () => {
         return { availFrom, availTo };
     };
 
-useEffect(() => {
-    console.log("Selected cities for search:", selectedTags.join(', '));
-}, [selectedTags]);
-    
-
-
-
+    useEffect(() => {
+        console.log("Selected cities for search:", selectedTags.join(', '));
+    }, [selectedTags]);
+        
 
     useEffect(() => {
         console.log("Total Results:", totalResults);
