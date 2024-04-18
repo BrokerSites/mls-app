@@ -125,8 +125,8 @@ const AllFilters = ({
                     onChange={(event, newValue) => handleSliderChange('rent', newValue)}
                     valueLabelDisplay="auto"
                     min={0}
-                    max={10000}
-                    step={100}
+                    max={30000000}
+                    step={100000}
                 />
                 <div className='option-input-div'>
                     <input

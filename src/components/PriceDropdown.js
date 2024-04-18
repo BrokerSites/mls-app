@@ -59,8 +59,8 @@ const PriceDropdown = ({ minRent, maxRent, onRentChange, isOpen, buttonRef, setR
                 onChange={handleSliderChange}
                 valueLabelDisplay="auto"
                 min={0}
-                max={10000}
-                step={100}
+                max={30000000}
+                step={100000}
             />
             <div className='option-input-div'>
                 <input

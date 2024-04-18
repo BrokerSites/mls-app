@@ -19,7 +19,7 @@ const App = () => {
     const [selectedTags, setSelectedTags] = useState([]);
     const [cityNeighborhood, setCityNeighborhood] = useState('');
     const [minRent, setMinRent] = useState(0); // Default minimum rent
-    const [maxRent, setMaxRent] = useState(10000); // Default maximum rent
+    const [maxRent, setMaxRent] = useState(10000000); // Default maximum rent
     const [moveInOption, setMoveInOption] = useState('Anytime');
     const [selectedDate, setSelectedDate] = useState('');
     const [bedsBaths, setBedsBaths] = useState({ beds: [0, 5], baths: [1, 5] });

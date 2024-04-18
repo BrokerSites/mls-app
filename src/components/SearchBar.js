@@ -134,7 +134,7 @@ useEffect(() => {
 const clearSearch = () => {
     setSelectedTags([]); // Assuming setSelectedTags is received as a prop
     setMinRent(0); // Assuming setMinRent is received as a prop
-    setMaxRent(10000); // Assuming setMaxRent is received as a prop
+    setMaxRent(30000000); // Assuming setMaxRent is received as a prop
     setBedsBaths({ beds: [0, 5], baths: [1, 5] }); // Already received as a prop
     setMoveInOption('Anytime'); // Already received as a prop
     setSelectedDate(''); // Already received as a prop
