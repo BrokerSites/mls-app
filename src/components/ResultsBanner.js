@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const ResultsBanner = ({ itemsPerPage, currentPage, count, total, onSortChange, sortParams = { sort_name: null, sort_dir: null } }) => {
+const ResultsBanner = ({ itemsPerPage, currentPage, count, total, onSortChange, sortParams = { sort: null } }) => {
   const startCount = (currentPage - 1) * itemsPerPage + 1;
   let endCount = startCount + count - 1;
 
   // Use `sortParams` with a fallback in case it's undefined
   let selectedSortValue = 'default';
-  if (sortParams && sortParams.sort_name === 'rent' && sortParams.sort_dir === 'desc') {
+  if (sortParams.sort === '-listprice') {
     selectedSortValue = 'highToLow';
-  } else if (sortParams && sortParams.sort_name === 'rent' && sortParams.sort_dir === 'asc') {
+  } else if (sortParams.sort === 'listprice') {
     selectedSortValue = 'lowToHigh';
   }
 

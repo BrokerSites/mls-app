@@ -34,26 +34,23 @@ const App = () => {
 
     const handleSortChange = (event) => {
         const value = event.target.value;
-        let sortName, sortDir;
-        
+        let sortParam;
+    
         switch (value) {
           case 'highToLow':
-            sortName = 'rent';
-            sortDir = 'desc';
+            sortParam = '-listprice';
             break;
           case 'lowToHigh':
-            sortName = 'rent';
-            sortDir = 'asc';
+            sortParam = 'listprice';
             break;
-          case 'default':
           default:
-            sortName = null;
-            sortDir = null;
+            sortParam = null; // or keep it as it might be 'default' or similar if you have such an option
             break;
         }
-      
-        setSortParams({ sort_name: sortName, sort_dir: sortDir });
-      };
+    
+        setSortParams({ sort: sortParam }); // Updating to use a single sort parameter
+    };
+    
 
       useEffect(() => {
         fetchCities();
@@ -129,6 +126,11 @@ const App = () => {
             offset: (currentPage - 1) * itemsPerPage
         });
     
+        // Only append sort if it's defined and not null
+        if (sortParams.sort) {
+            params.append('sort', sortParams.sort);
+        }
+    
         // Append city filters
         selectedTags.forEach(city => {
             params.append('cities', city);
@@ -138,7 +140,7 @@ const App = () => {
         if (minRent > 0) {
             params.append('minprice', minRent);
         }
-        if (maxRent < 29000000) {
+        if (maxRent < 10000000) {
             params.append('maxprice', maxRent);
         }
     
@@ -157,11 +159,6 @@ const App = () => {
             params.append('maxbaths', bedsBaths.baths[1]);
         }
     
-        // Detailed console log to check beds and baths being sent
-        console.log(`Beds: min ${bedsBaths.beds[0]} - max ${bedsBaths.beds[1]}`);
-        console.log(`Baths: min ${bedsBaths.baths[0]} - max ${bedsBaths.baths[1]}`);
-    
-        // Logging the parameters being sent to the API
         console.log("Sending API request with params:", params.toString());
     
         try {
@@ -181,6 +178,8 @@ const App = () => {
             setTotalResults(0);
         }
     };
+    
+    
     
     
     
