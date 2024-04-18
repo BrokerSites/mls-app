@@ -195,27 +195,7 @@ const clearSearch = () => {
               formatBeds={formatBeds}
               formatBaths={formatBaths}
           />
-          )}
-            <button
-                ref={moveInButtonRef} // Attach ref to Move-In button
-                className="btn btn-primary dropdown-toggle mi-btn"
-                onClick={() => toggleModal('showMoveInInput')}
-            >
-                Move-In
-            </button>
-            {modalState.showMoveInInput && (
-            <MoveIn
-                setRef={setModalRef} // new prop to pass the ref setting function
-                buttonRef={moveInButtonRef} // Pass ref to MoveIn
-                isOpen={modalState.showMoveInInput}
-                onToggle={() => toggleModal('showMoveInInput')}
-                moveInOption={moveInOption}
-                setMoveInOption={setMoveInOption}
-                selectedDate={selectedDate}
-                setSelectedDate={setSelectedDate}
-            />
-            )}
-          
+          )}          
           <button
                 ref={allFiltersButtonRef} // Attach ref to Move-In button
                 className="btn btn-primary af-btn"

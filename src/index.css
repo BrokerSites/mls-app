@@ -319,10 +319,11 @@ code {
 .option-input-div {
   display: flex;
   justify-content: space-between;
+  padding-top: 2px
 }
 
 .option-input {
-  width: 5em;
+  width: 6em;
 }
 
 .input-overlay {
@@ -404,6 +405,7 @@ code {
   /* Max height as a percentage of the viewport height */
   overflow: auto;
   /* Enable scrolling */
+  min-width: 20vw;
 }
 
 @media (max-width: 1000px) {

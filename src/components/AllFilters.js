@@ -220,59 +220,6 @@ const AllFilters = ({
                         </div>
                     </div>
             </div>
-            <div className='af-mi' >
-                <div>
-                    MOVE-IN DATE
-                </div>
-            <select 
-                value={moveInOption}
-                onChange={handleMoveInChange}
-                className='mi-select'
-            >
-                <option value="Anytime">Anytime</option>
-                <option value="Now">Now</option>
-                <option value="Before">Before a Date</option>
-                <option value="After">After a Date</option>
-            </select>
-            {(moveInOption === 'Before' || moveInOption === 'After') && (
-                <input
-                    type="date"
-                    
-                    value={selectedDate}
-                    onChange={handleDateChange}
-                />
-            )}
-            </div>
-            <form className='af-checks'>
-                <div className='af-check-wrap'>
-                    <input
-                        type="checkbox"
-                        id="pets"
-                        checked={isPetFriendly}
-                        onChange={() => setIsPetFriendly(!isPetFriendly)}
-                    />
-                    <label htmlFor="petFriendly">Pet Friendly</label>
-                </div>
-                <div className='af-check-wrap'>
-                    <input
-                        type="checkbox"
-                        id="parking"
-                        checked={hasParking}
-                        onChange={() => setHasParking(!hasParking)}
-                    />
-                    <label htmlFor="freeParking">Has Parking</label>
-                </div>
-                <div className='af-check-wrap'>
-                    <input
-                        type="checkbox"
-                        id="photos"
-                        checked={hasPhotos}
-                        onChange={() => setHasPhotos(!hasPhotos)}
-                    />
-                    <label htmlFor="pool">Has Photos</label>
-                </div>
-                {/* Add more filter options as needed */}
-            </form>
         </Box>
     );
 };

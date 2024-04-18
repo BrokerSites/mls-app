@@ -129,37 +129,44 @@ const App = () => {
             offset: (currentPage - 1) * itemsPerPage
         });
     
-        // Append each selected city as a separate 'cities' parameter
+        // Append city filters
         selectedTags.forEach(city => {
             params.append('cities', city);
         });
     
-        // Include minimum and maximum price filters if they are set
+        // Price filters
         if (minRent > 0) {
             params.append('minprice', minRent);
         }
-        if (maxRent < 10000000) { // Assuming 10,000,000 is your upper bound
+        if (maxRent < 29000000) {
             params.append('maxprice', maxRent);
         }
     
-        // Include beds and baths filters
+        // Bed and bath filters
         if (bedsBaths.beds[0] > 0) {
             params.append('minbeds', bedsBaths.beds[0]);
         }
-        if (bedsBaths.beds[1] && bedsBaths.beds[1] < 5) { // Check if there is a maximum limit set for beds
+        if (bedsBaths.beds[1] < 5) {
             params.append('maxbeds', bedsBaths.beds[1]);
         }
     
         if (bedsBaths.baths[0] > 0) {
             params.append('minbaths', bedsBaths.baths[0]);
         }
-        if (bedsBaths.baths[1] && bedsBaths.baths[1] < 5) { // Check if there is a maximum limit set for baths
+        if (bedsBaths.baths[1] < 5) {
             params.append('maxbaths', bedsBaths.baths[1]);
         }
     
+        // Detailed console log to check beds and baths being sent
+        console.log(`Beds: min ${bedsBaths.beds[0]} - max ${bedsBaths.beds[1]}`);
+        console.log(`Baths: min ${bedsBaths.baths[0]} - max ${bedsBaths.baths[1]}`);
+    
+        // Logging the parameters being sent to the API
+        console.log("Sending API request with params:", params.toString());
+    
         try {
             const response = await axios.get('https://api.simplyrets.com/properties', {
-                params: params, // Directly use the URLSearchParams object
+                params: params,
                 auth: {
                     username: 'simplyrets',
                     password: 'simplyrets'
@@ -174,6 +181,8 @@ const App = () => {
             setTotalResults(0);
         }
     };
+    
+    
     
     
     
