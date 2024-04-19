@@ -53,10 +53,10 @@ const MarkerClusterGroup = ({ listings, siteDomain }) => {
         `;
       
           // Add click event listener to the popup content
-        popupContent.addEventListener('click', () => {
-          const detailPageUrl = `${siteDomain}/property.html?id=${listing.id}`;
-          window.open(detailPageUrl, '_blank'); // Open in new tab or window
-        });
+          popupContent.addEventListener('click', () => {
+            const detailPageUrl = `${siteDomain}/property.html?id=${listing.mlsId}`;
+            window.open(detailPageUrl, '_blank'); // Open in new tab or window
+          });
 
         const marker = L.marker([latitude, longitude], {
           icon: L.divIcon({
