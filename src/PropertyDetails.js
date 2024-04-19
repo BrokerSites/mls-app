@@ -4,6 +4,9 @@ import { useLocation } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Box, Button, ImageList, ImageListItem, Modal, Paper, TextField, Typography } from '@mui/material';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 
 const PropertyDetails = () => {
     const location = useLocation();
@@ -54,9 +57,12 @@ const PropertyDetails = () => {
     }
 
     const renderListingDetails = (details) => {
+        // Assuming details.listPrice is a number
+        const formattedPrice = details.listPrice.toLocaleString();
+    
         return (
             <>
-                <Typography variant="h5">${details.listPrice}</Typography>
+                <Typography variant="h5">${formattedPrice}</Typography>
                 <Typography variant="subtitle1">{details.address.full}</Typography>
                 <Typography variant="subtitle1">
                     {details.property.bedrooms} BR, {details.property.bathsFull} BA
@@ -65,7 +71,7 @@ const PropertyDetails = () => {
                 <Typography variant="body2">MLS Number: {details.mlsId}</Typography>
                 <Typography variant="body2">Town: {details.address.city}</Typography>
                 <Typography variant="body2">State: {details.address.state}</Typography>
-                <Typography variant="body2">Listing Office: BrokerSites </Typography>
+                <Typography variant="body2">Listing Office: BrokerSites</Typography>
                 <Typography variant="body2">Listing Agent: Chris Cafferty</Typography>
                 <Typography variant="body1">{details.remarks}</Typography>
             </>
@@ -84,31 +90,40 @@ const PropertyDetails = () => {
         </form>
     );
 
+    const settings = {
+        dots: true, // Show dot indicators at the bottom of the carousel
+        infinite: true, // Infinite looping
+        arrows: true,
+        speed: 500, // Transition speed in milliseconds
+        slidesToShow: 1, // Number of slides to show at once
+        slidesToScroll: 1, // Number of slides to scroll on one button click
+        autoplay: false, // Enable autoplay
+        adaptiveHeight: true, // Adjusts the height of the carousel to the height of the current slide
+        responsive: [
+            {
+                breakpoint: 768, // At 768px or less, it will override the settings below
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    infinite: true,
+                    dots: true
+                }
+            }
+        ]
+    };
+
+    
+
     return (
         <div className='prop-det-container'>
-            <Box className="carousel-box" sx={{ width: '100%', overflowX: 'auto' }}>
-                <div id="carouselExampleIndicators" className="carousel slide" data-ride="carousel">
-                    <ol className="carousel-indicators">
-                        {propertyDetails.photos.map((url, index) => (
-                            <li key={index} data-target="#carouselExampleIndicators" data-slide-to={index} className={index === 0 ? 'active' : ''}></li>
-                        ))}
-                    </ol>
-                    <div className="carousel-inner">
-                        {propertyDetails.photos.map((url, index) => (
-                            <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
-                                <img className="d-block w-100" src={url} alt={`Slide ${index + 1}`} />
-                            </div>
-                        ))}
-                    </div>
-                    <a className="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span className="sr-only">Previous</span>
-                    </a>
-                    <a className="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span className="sr-only">Next</span>
-                    </a>
-                </div>
+            <Box className="slider-box" sx={{ width: '100%', overflowX: 'auto' }}>
+                <Slider className='carousel-box' {...settings}>
+                    {propertyDetails.photos.map((url, index) => (
+                        <div key={index}>
+                            <img src={url} alt={`Property image ${index}`} style={{ width: '100%', height: 'auto' }} />
+                        </div>
+                    ))}
+                </Slider>
             </Box>
 
             <div className='details-inquire' style={{ flexDirection: isXSmall ? 'column' : 'row' }}>

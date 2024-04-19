@@ -496,6 +496,25 @@ code {
   }
 }
 
+.slick-prev:before, .slick-next:before {
+  font-family: 'slick';
+  font-size: 20px;
+  line-height: 1;
+  opacity: .75;
+  color: black;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.slider-box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: clip !important;
+  padding-bottom: 2em;
+  padding-top: 1em;
+}
+
 .prop-det-container {
   display: flex;
   flex-direction: column;

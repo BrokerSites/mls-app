@@ -140,7 +140,7 @@ const App = () => {
         if (minRent > 0) {
             params.append('minprice', minRent);
         }
-        if (maxRent < 10000000) {
+        if (maxRent < 29000000) {
             params.append('maxprice', maxRent);
         }
     
